@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "voxnode-whcl-backend": {
+      "main": "src/voxnode-whcl-backend/main.mo",
+      "type": "motoko"
+    },
+    "voxnode-whcl-frontend": {
+      "dependencies": [
+        "voxnode-whcl-backend"
+      ],
+      "source": [
+        "src/voxnode-whcl-frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "voxnode-whcl-frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
