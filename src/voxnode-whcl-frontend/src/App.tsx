@@ -1,6 +1,6 @@
 // src/App.tsx
 import { Routes, Route } from 'react-router';
-import Home from './pages/landing_page/Home';
+import Home from './pages/landing-page/Home';
 import { Feed } from './pages/feeds/Feed';
 // import About from './pages/About';
 

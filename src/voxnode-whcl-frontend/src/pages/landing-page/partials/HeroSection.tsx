@@ -2,6 +2,7 @@
 
 import { AppLogo } from '@/components/app-logo';
 import HeroVideoDialog from '@/components/magicui/hero-video-dialog';
+import { Button } from '@/components/ui/button';
 import { motion } from 'motion/react';
 
 export function HeroSection() {
@@ -57,9 +58,9 @@ export function HeroSection() {
           }}
           className="relative z-10 mt-8 flex flex-wrap items-center justify-center gap-4"
         >
-          <button className="w-60 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800">
+          <Button className="w-60 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800">
             Start Your Opinion
-          </button>
+          </Button>
         </motion.div>
         <hr className="my-10" />
         <h2 className="relative z-10 mx-auto max-w-4xl text-center text-lg font-bold text-slate-700 md:text-2xl lg:text-4xl font-comic">
@@ -97,12 +98,6 @@ export function HeroSection() {
           </div>
         </motion.div>
       </div>
-      <footer className="bg-black flex w-full justify-between items-center py-20 px-18 text-white">
-        <AppLogo className="scale-[200%] origin-left" />
-        <h2 className="text-2xl md:text-4xl font-bold font-comic">
-          #KritikAsikTanpaTerusik
-        </h2>
-      </footer>
     </div>
   );
 }
