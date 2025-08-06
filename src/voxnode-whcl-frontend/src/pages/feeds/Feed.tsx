@@ -7,14 +7,14 @@ import { Post, Comment } from '@/types';
 
 export const Feed = () => {
   return (
-    <MainLayout>
+    <>
       <CreateOpinion />
       <div className="pb-2 bt-2 divide-y divide-gray-200">
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
       </div>
-    </MainLayout>
+    </>
   );
 };
 
