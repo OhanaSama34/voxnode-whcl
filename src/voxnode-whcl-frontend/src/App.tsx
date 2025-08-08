@@ -11,10 +11,9 @@ import type { _SERVICE as Actor_Service } from '../../declarations/voxnode-whcl-
 
 import MainLayout from './layouts/main-layout';
 import Home from './pages/landing-page/Home';
-import { Feed } from './pages/feeds/Feed';
+import { FeedPage } from './pages/feeds/Feed';
 import VoxBotPage from './pages/voxbot';
 
-// Define a type for the application's authentication state for type safety.
 export interface AppState {
   isAuthenticated: boolean;
   principal?: string;
@@ -22,10 +21,15 @@ export interface AppState {
   authClient?: AuthClient;
 }
 
-const network = import.meta.env.DFX_NETWORK;
-
-// Determine the identity provider URL based on the network.
+const network = process.env.DFX_NETWORK;
+console.log(network)
 const identityProvider = 'https://identity.ic0.app';
+// const identityProvider =
+//   network === 'ic'
+//     ? 'https://identity.ic0.app' // Mainnet
+    // : `${import.meta.env.CANISTER_ID_VOXNODE_WHCL_BACKEND}.localhost:3000`; // Local
+    // : `http://${process.env.CANISTER_ID_VOXNODE_WHCL_BACKEND}.localhost:4943`; // Local
+
 
 export default function App() {
   const [state, setState] = useState<AppState>({
@@ -54,14 +58,12 @@ export default function App() {
     initAuth();
   }, []);
 
-  // This function is called on successful login or on initial load if already authenticated.
   const handleAuthenticated = async (authClient: AuthClient) => {
     const identity = authClient.getIdentity();
     const principal = identity.getPrincipal().toString();
 
     const agent = new HttpAgent({ identity, host: import.meta.env.VITE_HOST });
 
-    // For local development, we need to fetch the root key.
     if (network !== 'ic') {
       await agent.fetchRootKey().catch((err) => {
         console.warn(
@@ -71,12 +73,10 @@ export default function App() {
       });
     }
 
-    // Create the actor (backend canister interface).
     const actor = createActor(canisterId as string, {
       agent,
     });
 
-    // Update the application state with the authenticated user's info.
     setState({
       isAuthenticated: true,
       authClient,
@@ -110,7 +110,7 @@ export default function App() {
     <MainLayout state={state} login={login} logout={logout}>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/feeds" element={<Feed />} />
+        <Route path="/feeds" element={<FeedPage actor={state.actor} isAuthenticated={state.isAuthenticated} />} />
         <Route path="/voxbot" element={<VoxBotPage />} />
       </Routes>
     </MainLayout>

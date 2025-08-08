@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router'; // Correct import for web projects
-import type { AppState } from '@/App'; // Import the state type from App.tsx
-
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router';
+import { Principal } from '@dfinity/principal';
+import { Loader2, LogOutIcon, Settings, User, LifeBuoy } from 'lucide-react';
 import { AppLogo } from './app-logo';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -14,42 +14,55 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "./ui/drawer"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from './ui/dropdown-menu';
+} from "./ui/drawer";
 import { Badge } from './ui/badge';
-import { LifeBuoy, LogOutIcon, Settings, User } from 'lucide-react';
 
 // Helper function to shorten the principal ID for display
 const shortenPrincipal = (principalId?: string) => {
   if (!principalId) return '';
   const parts = principalId.split('-');
   if (parts.length < 5) return principalId;
-  return `${parts[0]}-${parts[1]}...${parts[parts.length - 2]}-${
-    parts[parts.length - 1]
-  }`;
+  return `${parts[0]}-${parts[1]}...${parts[parts.length - 2]}-${parts[parts.length - 1]}`;
 };
 
 // Define the props the Navbar will receive.
 interface NavbarProps {
-  state: AppState;
+  state: {
+    isAuthenticated: boolean;
+    actor?: any;
+    principal?: string | null;
+  };
   login: () => void;
   logout: () => void;
 }
 
 export const Navbar = ({ state, login, logout }: NavbarProps) => {
+  const [reputation, setReputation] = useState<string | null>(null);
+  const [isLoadingReputation, setIsLoadingReputation] = useState(false);
+
+  useEffect(() => {
+    const fetchReputation = async () => {
+      if (state.isAuthenticated && state.actor && state.principal) {
+        setIsLoadingReputation(true);
+        setReputation(null);
+        try {
+          const userPrincipal = Principal.fromText(state.principal);
+          const result = await state.actor.getReputation(userPrincipal);
+          setReputation(result.toString());
+        } catch (error) {
+          console.error("Failed to fetch reputation:", error);
+          setReputation("Error");
+        } finally {
+          setIsLoadingReputation(false);
+        }
+      } else {
+        setReputation(null);
+      }
+    };
+
+    fetchReputation();
+  }, [state.isAuthenticated, state.actor, state.principal]);
+
   return (
     <nav className="sticky top-0 z-10 flex w-full items-center justify-between overflow-x-hidden border border-neutral-200/80 bg-white/20 px-4 py-4 backdrop-blur-md dark:border-neutral-800/80 dark:bg-black/20">
       <div className="flex items-center gap-2">
@@ -71,9 +84,15 @@ export const Navbar = ({ state, login, logout }: NavbarProps) => {
       </div>
       <div className="flex items-center gap-2">
         {state.isAuthenticated ? (
-          // If authenticated, show the user menu
           <>
-            <Badge>YOUR POINTS: 7</Badge>
+            <Badge variant="outline" className="flex items-center gap-2">
+              YOUR POINTS:
+              {isLoadingReputation ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <span className="font-bold">{reputation ?? '...'}</span>
+              )}
+            </Badge>
             <Drawer direction="right">
               <DrawerTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -90,9 +109,9 @@ export const Navbar = ({ state, login, logout }: NavbarProps) => {
                   </DrawerTitle>
                   <DrawerDescription
                     className="text-sm text-neutral-500 dark:text-neutral-400 truncate"
-                    title={state.principal}
+                    title={state.principal || undefined}
                   >
-                    Principal: {shortenPrincipal(state.principal)}
+                    Principal: {shortenPrincipal(state.principal || undefined)}
                   </DrawerDescription>
                 </DrawerHeader>
                 <div className="flex-grow p-4 space-y-4">
@@ -101,7 +120,7 @@ export const Navbar = ({ state, login, logout }: NavbarProps) => {
                       Reputation Points
                     </p>
                     <p className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
-                      7
+                      {reputation ?? '...'}
                     </p>
                   </div>
                   <div className="space-y-1">
@@ -132,7 +151,6 @@ export const Navbar = ({ state, login, logout }: NavbarProps) => {
             </Drawer>
           </>
         ) : (
-          // If not authenticated, show the login button
           <Button onClick={login} className="capitalize">
             Login with Internet Identity
           </Button>

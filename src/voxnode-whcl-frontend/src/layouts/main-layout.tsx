@@ -2,7 +2,7 @@
 import React from 'react';
 import { Footer } from '@/components/footer';
 import { Navbar } from '@/components/Navbar';
-import type { AppState } from '@/App'; // Import the state type from App.tsx
+import { AppState } from '@/App';
 
 // Define the props for the layout component for type safety.
 interface MainLayoutProps {

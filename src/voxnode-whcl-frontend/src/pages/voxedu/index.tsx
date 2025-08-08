@@ -2,18 +2,24 @@
 import { motion } from 'motion/react';
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Shield, MessageCircle, Brain } from 'lucide-react';
+
+// Placeholder icons if the specific ones don't exist
+const ShieldCheckIcon = Shield;
+const MessageCircleIcon = MessageCircle;
+const BrainCircuitIcon = Brain;
 
 export default function VoxEduPage() {
   // Animation variants for Framer Motion
   const sectionVariants = {
     hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0 },
   };
 
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.9 },
-    visible: (i) => ({
+    visible: (i: number) => ({
       opacity: 1,
       scale: 1,
       transition: {
@@ -25,7 +31,7 @@ export default function VoxEduPage() {
 
   const compareBoxVariants = {
       hidden: { opacity: 0, x: -50 },
-      visible: (i) => ({
+      visible: (i: number) => ({
           opacity: 1,
           x: 0,
           transition: {
