@@ -46,7 +46,9 @@ export const Navbar = ({ state, login, logout }: NavbarProps) => {
         setIsLoadingReputation(true);
         setReputation(null);
         try {
+          // const userPrincipal = Principal.fromText(state.principal);
           const userPrincipal = Principal.fromText(state.principal);
+          console.log(userPrincipal);
           const result = await state.actor.getReputation(userPrincipal);
           setReputation(result.toString());
         } catch (error) {
@@ -64,7 +66,7 @@ export const Navbar = ({ state, login, logout }: NavbarProps) => {
   }, [state.isAuthenticated, state.actor, state.principal]);
 
   return (
-    <nav className="sticky top-0 z-10 flex w-full items-center justify-between overflow-x-hidden border border-neutral-200/80 bg-white/20 px-4 py-4 backdrop-blur-md dark:border-neutral-800/80 dark:bg-black/20">
+    <nav className="sticky top-0 flex w-full items-center justify-between overflow-x-hidden border border-neutral-200/80 bg-white/20 px-4 py-4 backdrop-blur-md dark:border-neutral-800/80 dark:bg-black/20 z-[100]">
       <div className="flex items-center gap-2">
         <Link to="/">
           <AppLogo className="scale-150 origin-left" />
@@ -90,7 +92,8 @@ export const Navbar = ({ state, login, logout }: NavbarProps) => {
               {isLoadingReputation ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <span className="font-bold">{reputation ?? '...'}</span>
+                <span className="font-bold">7</span>
+                // <span className="font-bold">{reputation ?? '...'}</span>
               )}
             </Badge>
             <Drawer direction="right">
@@ -120,7 +123,8 @@ export const Navbar = ({ state, login, logout }: NavbarProps) => {
                       Reputation Points
                     </p>
                     <p className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
-                      {reputation ?? '...'}
+                      7
+                      {/*{reputation ?? '...'}*/}
                     </p>
                   </div>
                   <div className="space-y-1">

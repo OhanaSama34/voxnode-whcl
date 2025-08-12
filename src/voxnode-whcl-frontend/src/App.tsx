@@ -22,7 +22,6 @@ export interface AppState {
 }
 
 const network = process.env.DFX_NETWORK;
-console.log(network)
 const identityProvider = 'https://identity.ic0.app';
 // const identityProvider =
 //   network === 'ic'
@@ -35,6 +34,8 @@ export default function App() {
   const [state, setState] = useState<AppState>({
     isAuthenticated: false,
   });
+
+  console.log(canisterId);
 
   // This effect runs once when the component mounts to initialize authentication.
   useEffect(() => {

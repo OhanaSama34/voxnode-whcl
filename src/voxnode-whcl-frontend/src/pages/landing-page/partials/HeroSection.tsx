@@ -4,14 +4,15 @@ import { AppLogo } from '@/components/app-logo';
 import HeroVideoDialog from '@/components/magicui/hero-video-dialog';
 import { Button } from '@/components/ui/button';
 import { motion } from 'motion/react';
+import { VoxnodeFeatures } from './features';
 
 export function HeroSection() {
   return (
-    <div className="relative mx-auto my-10 flex max-w-7xl flex-col items-center justify-center">
+    <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-center">
       <div className="px-4 py-10 md:py-20">
         <AppLogo className="mx-auto select-none mb-4" />
         <h1 className="relative z-10 mx-auto max-w-4xl text-center text-2xl font-bold text-slate-700 md:text-4xl lg:text-8xl font-comic">
-          {`"Kritik Asik Tanpa Harus Terusik"`.split(' ').map((word, index) => (
+          {`Kritik Asik Tanpa Harus Terusik`.split(' ').map((word, index) => (
             <motion.span
               key={index}
               initial={{ opacity: 0, filter: 'blur(4px)', y: 10 }}
@@ -91,13 +92,31 @@ export function HeroSection() {
             <HeroVideoDialog
               className="block "
               animationStyle="from-center"
-              videoSrc="https://www.youtube.com/embed/e5gGf--7YtU?si=sJlEmU5lHSC7DJUu"
-              thumbnailSrc="https://img.youtube.com/vi/SzXMacu80o8/maxresdefault.jpg"
+              videoSrc="https://www.youtube.com/embed/ZDoyjW3urvM?si=3VhHcPa02yzBO53L"
+              thumbnailSrc="https://img.youtube.com/vi/ZDoyjW3urvM/maxresdefault.jpg"
               thumbnailAlt="Hero Video"
             />
           </div>
         </motion.div>
       </div>
+      <VoxnodeFeatures />
+
+      <div className="px-8 text-center mt-8 mb-16">
+        <h5 className="text-lg md:text-xl font-semibold text-black dark:text-white">
+          Siap untuk menyuarakan pendapat Anda?
+        </h5>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-2 mb-6 max-w-md mx-auto">
+          Gabung dalam diskusi secara anonim dan aman. Jadilah bagian dari perubahan.
+        </p>
+        <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-md font-medium flex items-center justify-center gap-2 mx-auto shadow-lg"
+        >
+            Masuk dengan Internet Identity
+        </motion.button>
+      </div>
+
     </div>
   );
 }

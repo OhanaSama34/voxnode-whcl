@@ -3,11 +3,14 @@ import { PostCard } from '@/components/post-card';
 import { ChevronUp, ChevronDown, User, CornerDownRight } from 'lucide-react';
 import { CreateOpinion } from '@/components/create-opinion';
 import { Post, Comment } from '@/types';
+import {posts as mockPosts} from '@/datas/d_post';
 
 export const FeedPage = ({ actor, isAuthenticated }: { actor: any; isAuthenticated?: boolean }) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  console.log('actor:', actor);
 
   const fetchPosts = useCallback(async () => {
     if (!actor) {
@@ -35,6 +38,7 @@ export const FeedPage = ({ actor, isAuthenticated }: { actor: any; isAuthenticat
   return (
     <>
       <CreateOpinion actor={actor} onPostCreated={fetchPosts} />
+      {/*{actor}*/}
       <div className="pb-2 bt-2 divide-y divide-gray-200">
         {isLoading && <p className="text-center p-4">Loading opinions...</p>}
         {error && <p className="text-center p-4 text-red-500">{error}</p>}

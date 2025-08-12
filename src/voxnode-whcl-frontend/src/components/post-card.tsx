@@ -30,7 +30,7 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
   };
 
   return (
-    <div className="bg-white p-6">
+    <div className="bg-white p-6 w-full">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600">
@@ -38,8 +38,8 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
           </div>
           <div>
             <div className="flex items-center space-x-1 text-base">
-              <span className="font-bold text-gray-900">{post.username}</span>
-              <span className="text-gray-500">{post.handle}</span>
+              <span className="font-bold text-gray-900">lk..1g</span>
+              {/*<span className="text-gray-500">{post.handle}</span>*/}
               <span className="text-gray-500">• {post.time}</span>
             </div>
           </div>
@@ -67,7 +67,7 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
         >
           <MessageCircle size={20} />
           <span className="text-sm font-medium">
-            {post.commentsCount / 1000}k
+            {post.commentsCount}
           </span>
         </button>
       </div>

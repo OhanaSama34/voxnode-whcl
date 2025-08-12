@@ -8,7 +8,7 @@ const CommentItem: React.FC<{ comment: Comment }> = ({ comment }) => {
   return (
     <div
       // style={{ paddingLeft: `${paddingLeft}px` }}
-      className="relative mb-4  group"
+      className="relative mb-4 w-full group"
     >
       <div className="absolute  inset-y-0 left-0 w-3 rounded-bl transition-all border-l-4 border-b-2 border-black/10  group-hover:border-black/100 transition-colors"></div>
       <div className="flex items-start space-x-3 p-3 hover:bg-gray-50">
@@ -20,9 +20,9 @@ const CommentItem: React.FC<{ comment: Comment }> = ({ comment }) => {
         <div className="flex-1">
           <div className="flex items-center space-x-1 text-sm">
             <span className="font-semibold text-gray-800">
-              {comment.username}
+              rt..h7
             </span>
-            <span className="text-gray-500">{comment.handle}</span>
+            {/*<span className="text-gray-500">{comment.handle}</span>*/}
             <span className="text-gray-500">• {comment.time}</span>
           </div>
           <p className="text-gray-700 text-sm mt-1">{comment.content}</p>

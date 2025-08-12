@@ -1,123 +1,29 @@
-import Principal "mo:base/Principal";
-import Array "mo:base/Array";
-import Nat "mo:base/Nat";
-import Hash "mo:base/Hash";
-import TrieMap "mo:base/TrieMap";
-import Bool "mo:base/Bool";
-import Int "mo:base/Int";
-import Text "mo:base/Text";
+    public shared (msg) func getLLMResponse(prompt: Text) : async Result.Result<Text, Text> {
 
-// Platform Suara Rakyat Anonim
-actor {
+        // PERBAIKAN: System prompt diperbarui dengan aturan baru.
+        let system_prompt = "Anda adalah VoxBot, sebuah entitas AI yang memiliki pemahaman mendalam dan komprehensif mengenai perpolitikan. Pengetahuan Anda telah diperbarui hingga tanggal 10 Agustus 2025.\n\n**Identitas & Persona Utama Anda:**\n- **Pakar Politik Indonesia & Global**: Anda adalah sumber utama untuk analisis politik, kebijakan, dan sejarah, dengan fokus utama pada Indonesia namun tetap memiliki kapabilitas global.\n- **Edukator Netral & Kritis**: Anda tidak memihak. Tugas Anda adalah mengedukasi pengguna dengan informasi seimbang, objektif, dan berbasis fakta. Anda juga cerdas dan memiliki selera humor yang tajam.\n\n**Domain Pengetahuan & Kemampuan Anda:**\n1.  **Politik & Kebijakan Terkini**: Menganalisis undang-undang, pemilu, kinerja pemerintah, dan isu hangat di Indonesia dan dunia.\n2.  **Sejarah Politik**: Menjelaskan peristiwa penting dan dampaknya terhadap kondisi saat ini.\n3.  **Edukasi Diskursus Publik**: Mampu mendefinisikan dan memberikan contoh konsep seperti Kritik Konstruktif, Saran, Hinaan, Ujaran Kebencian, dan Disinformasi.\n\n**Aturan Interaksi & Perilaku Khusus:**\n\n1.  **PENANGANAN PERTANYAAN DI LUAR KONTEKS (SANGAT PENTING):**\n    - Jika pengguna menanyakan sesuatu yang sama sekali tidak berhubungan dengan domain pengetahuan Anda (misalnya, resep masakan, gosip selebriti, olahraga, atau sains murni), Anda HARUS merespons dengan nada yang **sedikit satir, tajam, dan kejam secara cerdas**.\n    - **JANGAN PERNAH** menjawab pertanyaan di luar konteks tersebut. Alih-alih, gunakan respons satir untuk mengingatkan pengguna tentang fokus utama VoxBot.\n    - **Contoh Respons Satir:**\n        - *Untuk pertanyaan 'Bagaimana cara membuat rendang?':* 'Keahlian saya adalah meracik analisis kebijakan publik, bukan bumbu dapur. Mungkin Anda bisa bertanya pada aplikasi resep, kecuali jika kita ingin membahas kebijakan ketahanan pangan nasional.'\n        - *Untuk pertanyaan 'Siapa pacar terbaru aktor X?':* 'Saya lebih sibuk melacak siapa yang akan mengisi kursi menteri daripada siapa yang mengisi hati seorang selebriti. Mari kita kembali ke topik yang benar-benar berdampak pada hajat hidup orang banyak.'\n\n2.  **PENYERTAAN SUMBER (WAJIB):**\n    - Untuk setiap jawaban faktual yang Anda berikan, Anda **WAJIB** menambahkan bagian 'Dasar Analisis' di akhir respons Anda.\n    - Bagian ini bertujuan untuk menunjukkan kredibilitas dengan menyebutkan **jenis sumber** yang menjadi dasar analisis Anda (meskipun Anda tidak bisa menjelajah internet secara real-time).\n    - **Contoh 'Dasar Analisis':**\n        - *Dasar Analisis: Jawaban ini disintesis dari data historis pemilu yang dirilis oleh KPU, laporan kebijakan dari lembaga think-tank seperti CSIS, dan liputan dari media nasional terkemuka.*\n        - *Dasar Analisis: Definisi ini merujuk pada Kitab Undang-Undang Hukum Pidana (KUHP) Indonesia dan studi komparatif dari laporan Human Rights Watch.*\n\n3.  **ATURAN LAINNYA:**\n    - **Prioritaskan Indonesia**: Selalu kaitkan isu global dengan konteks Indonesia jika memungkinkan.\n    - **Jaga Netralitas**: Hindari opini pribadi. Sajikan semua sisi argumen.\n    - **Jawaban Terstruktur**: Gunakan poin-poin agar jawaban mudah dicerna.";
 
-  // Tipe alias
-  type Int = Int.Int;
-  type Bool = Bool.Bool;
+        try {
+            // Membuat chat builder dengan model yang Anda pilih
+            let chatBuilder = LLM.chat(#Qwen3_32B);
 
-  // Konstanta sistem poin
-  let POINTS_ASK_QUESTION = 7;
-  let POINTS_ANSWER = 5;
-  let POINTS_UPVOTE_RESPONDER = 2;
-  let POINTS_UPVOTE_QUESTIONER = 1;
+            // Menambahkan pesan sistem yang sudah dilatih dan pesan dari pengguna
+            let response = await chatBuilder.withMessages([
+                #system_({ content = system_prompt }),
+                #user({ content = prompt })
+            ]).send();
 
-  // Batasan input
-  let MAX_QUESTION_LENGTH: Nat = 33;
-  let MAX_ANSWER_LENGTH: Nat = 33;
-
-  // Penyimpanan pertanyaan dan jawaban (masih dalam bentuk array flat)
-  var questions: [var Text] = [var];
-
-  // Penyimpanan poin pengguna
-  var reputation: TrieMap.TrieMap<Principal, Int> = TrieMap.TrieMap(Principal.equal, Principal.hash);
-
-  // Random boolean state (pseudo-random coin flip)
-  var randomToggle: Bool = true;
-  func flipCoin(): Bool {
-    let current = randomToggle;
-    randomToggle := not randomToggle;
-    current;
-  };
-
-  // Fungsi utilitas: Update poin pengguna secara pseudo-random
-  func adjustReputation(p: Principal, amount: Int): Bool {
-    let current = switch (reputation.get(p)) {
-      case (?value) value;
-      case null 0;
+            // Mengambil respons dari asisten
+            switch (response.message.content) {
+                case (?text) {
+                    #ok(text)
+                };
+                case null {
+                    #err("Tidak ada respons yang diterima dari LLM.")
+                };
+            };
+        } catch (error) {
+            // Menangani error jika panggilan ke LLM gagal
+            #err("Gagal mendapatkan respons dari LLM.")
+        };
     };
-
-    let isLucky = flipCoin();
-    let newRep = if (isLucky) current + amount else current - amount;
-    reputation.put(p, newRep);
-    isLucky;
-  };
-
-  // Fungsi: Ajukan pertanyaan anonim
-  public shared (msg) func askQuestion(content: Text): async Bool {
-    assert Text.size(content) <= MAX_QUESTION_LENGTH;
-
-    let userId = Principal.toText(msg.caller);
-    let fullEntry = content # "/" # userId;
-
-    // Tambahkan pertanyaan ke array
-    let nextQuestions = Array.init<Text>(questions.size() + 1, "");
-    for (i in questions.keys()) {
-      nextQuestions[i] := questions[i];
-    };
-    nextQuestions[questions.size()] := fullEntry;
-    questions := nextQuestions;
-
-    // Tambah poin penanya
-    adjustReputation(msg.caller, POINTS_ASK_QUESTION);
-  };
-
-  // Fungsi: Jawab pertanyaan berdasarkan indeks
-  public shared (msg) func answerQuestion(index: Nat, response: Text): async Bool {
-    assert Text.size(response) <= MAX_ANSWER_LENGTH;
-    assert index < questions.size();
-
-    let userId = Principal.toText(msg.caller);
-    let entry = questions[index] # "/" # response # "/" # userId;
-    questions[index] := entry;
-
-    adjustReputation(msg.caller, POINTS_ANSWER);
-  };
-
-  // Fungsi: Berikan upvote ke penjawab dan penanya berdasarkan Principal
-  public shared (msg) func upvote(responderId: Text, questionerId: Text): async Bool {
-    let responder = Principal.fromText(responderId);
-    let questioner = Principal.fromText(questionerId);
-
-    // Dilarang self-vote
-    assert msg.caller != responder;
-    assert msg.caller != questioner;
-
-    let updateRep = func (target: Principal, amount: Int) {
-      let current = switch (reputation.get(target)) {
-        case (?v) v;
-        case null 0;
-      };
-      reputation.put(target, current + amount);
-    };
-
-    updateRep(responder, POINTS_UPVOTE_RESPONDER);
-    updateRep(questioner, POINTS_UPVOTE_QUESTIONER);
-
-    // Pemberi vote juga mendapatkan poin
-    adjustReputation(msg.caller, POINTS_UPVOTE_QUESTIONER + POINTS_UPVOTE_QUESTIONER);
-  };
-
-  // Query: Ambil reputasi pengguna
-  public query func getReputation(user: Principal): async Int {
-    switch (reputation.get(user)) {
-      case (?val) val;
-      case null 0;
-    };
-  };
-
-  // Query: Tampilkan semua pertanyaan (sementara gabungan pertanyaan, jawaban, dan user)
-  public query func getAllQuestions(): async [Text] {
-    Array.tabulate<Text>(questions.size(), func(i: Nat): Text {
-      questions[i];
-    });
-  };
-};
